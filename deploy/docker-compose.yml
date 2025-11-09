@@ -20,7 +20,10 @@ services:
         hard: 262144
 
   ingest:
-    build: ../ingest-go
+    build:
+      context: ..                 # корень репозитория
+      dockerfile: ingest-go/Dockerfile
+
     depends_on:
       - clickhouse
     environment:
@@ -30,6 +33,8 @@ services:
       - CH_PASS=app
     ports:
       - "8080:8080"
+
+
 
 
 volumes:
