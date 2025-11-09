@@ -1,0 +1,113 @@
+syntax = "proto3";
+package anticheat.v1;
+
+message TelemetryBatch {
+  string batch_id        = 1;
+  string session_id      = 2;
+  string player_id_hash  = 3;
+  ClientInfo client      = 4;
+  repeated TelemetryEvent events = 5;
+  int64 sent_at_unix_ms  = 6;
+}
+
+message TelemetryEvent {
+  int64 ts_unix_ms        = 1;
+  PerfStats perf          = 2;
+  InputSummary input      = 3;
+  MovementSummary move    = 4;
+  repeated ModuleInfo modules = 5;
+  IntegrityFlags integrity = 6;
+  RuleTriggers triggers   = 7;
+  ForensicRef forensic    = 8;
+  map<string,string> tags = 9;
+}
+
+message ClientInfo {
+  string agent_version = 1;
+  string game_build    = 2;
+  string os            = 3;
+  string arch          = 4;
+}
+
+message PerfStats {
+  float fps_avg           = 1;
+  float fps_p1            = 2;
+  float fps_p99           = 3;
+  float ping_ms_avg       = 4;
+  float cpu_proc_percent  = 5;
+  float mem_proc_mb       = 6;
+  float gpu_usage_percent = 7;
+  float gpu_temp_c        = 8;
+}
+
+message InputSummary {
+  uint32 clicks_total      = 1;
+  repeated InputBucket buckets = 2;
+  float click_variance     = 3;
+  bool triggerbot_suspect  = 4;
+  bool recoil_perfect      = 5;
+}
+
+message InputBucket {
+  uint32 bucket_ms   = 1;
+  uint32 press_count = 2;
+}
+
+message MovementSummary {
+  float distance_m         = 1;
+  float speed_avg_mps      = 2;
+  float speed_max_mps      = 3;
+  bool teleport_suspect    = 4;
+  bool flight_suspect      = 5;
+  bool noclip_suspect      = 6;
+  float vertical_speed_mps = 7;
+}
+
+message ModuleInfo {
+  string name          = 1;
+  string sha256        = 2;
+  bool is_signed       = 3;
+  bool in_whitelist    = 4;
+}
+
+message IntegrityFlags {
+  bool hash_mismatch   = 1;
+  bool unknown_modules = 2;
+  bool hook_suspect    = 3;
+  bool memory_edit     = 4;
+}
+
+message RuleTriggers {
+  bool speedhack            = 1;
+  bool teleport             = 2;
+  bool flight               = 3;
+  bool noclip               = 4;
+
+  bool aimbot               = 5;
+  bool silent_aim           = 6;
+  bool recoil_control       = 7;
+  bool triggerbot           = 8;
+  bool perfect_accuracy     = 9;
+
+  bool impossible_tx        = 10;
+  bool money_injection      = 11;
+  bool item_dupe            = 12;
+
+  uint32 report_count       = 13;
+
+  bool honeypot_hit         = 14;
+  bool unknown_module       = 15;
+  bool packet_spoof         = 16;
+
+  bool macro_pattern        = 17;
+  bool auto_farm            = 18;
+  bool no_spread            = 19;
+
+  float anomaly_score       = 20;
+}
+
+message ForensicRef {
+  bool has_snapshot   = 1;
+  string snapshot_id  = 2;
+  uint32 duration_sec = 3;
+}
